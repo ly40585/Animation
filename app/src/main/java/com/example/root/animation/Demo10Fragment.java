@@ -1,5 +1,6 @@
 package com.example.root.animation;
 
+import android.animation.TimeInterpolator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 
 
@@ -36,20 +38,30 @@ public class Demo10Fragment extends Fragment implements View.OnClickListener {
         Log.i(TAG, "Demo3Fragment onCreateView");
         View view = inflater.inflate(R.layout.demo10, container, false);
         Button button1 = (Button) view.findViewById(R.id.button1);
-        Button button2 = (Button) view.findViewById(R.id.button1);
+        Button button2 = (Button) view.findViewById(R.id.button2);
+        Button button3 = (Button) view.findViewById(R.id.button3);
+        Button button4 = (Button) view.findViewById(R.id.button4);
+
         myview = (MyAnimViewDemo10) view.findViewById(R.id.myview);
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
+        button3.setOnClickListener(this);
+        button4.setOnClickListener(this);
+
         return view;
 
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.button1) {
+        if (v.getId() == R.id.button1) {
             myview.start(1);
-        } else if(v.getId() == R.id.button2) {
+        } else if (v.getId() == R.id.button2) {
             myview.start(2);
+        } else if (v.getId() == R.id.button3) {
+            myview.start(3);
+        } else if (v.getId() == R.id.button4) {
+            myview.start(4);
         }
     }
 
@@ -57,7 +69,7 @@ public class Demo10Fragment extends Fragment implements View.OnClickListener {
 }
 
 class MyAnimViewDemo10 extends View {
-    private int animation = 2;
+    private int animation = 1;
     private PointDemo10 currentPoint;
 
     private Paint mPaint;
@@ -85,19 +97,55 @@ class MyAnimViewDemo10 extends View {
         if (currentPoint == null) {
             currentPoint = new PointDemo10(getWidth() / 2, RADIUS);
             drawCircle(canvas);
-            if(animation ==1) {
+            if (animation == 1) {
                 startAnimation1();
-            } else if(animation == 2) {
+            } else if (animation == 2) {
                 startAnimation2();
+            } else if (animation == 3) {
+                startAnimation3();
+            } else if (animation == 4) {
+                startAnimation4();
             }
         } else {
             drawCircle(canvas);
         }
     }
 
+    private void startAnimation4() {
+         PointDemo10 startPoint = new PointDemo10(getWidth() / 2, RADIUS);
+             PointDemo10 endPoint = new PointDemo10(getWidth() / 2, getHeight() - RADIUS);
+             ValueAnimator anim = ValueAnimator.ofObject(new PointEvaluatorDemo10(), startPoint, endPoint);
+             anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                     @Override
+                     public void onAnimationUpdate(ValueAnimator animation) {
+                             currentPoint = (PointDemo10) animation.getAnimatedValue();
+                             invalidate();
+                         }
+                 });
+             anim.setInterpolator(new DecelerateAccelerateInterpolator());
+             anim.setDuration(3000);
+             anim.start();
+    }
+
+    private void startAnimation3() {
+        PointDemo10 startPoint = new PointDemo10(getWidth() / 2, RADIUS);
+        PointDemo10 endPoint = new PointDemo10(getWidth() / 2, getHeight() - RADIUS);
+        ValueAnimator anim = ValueAnimator.ofObject(new PointEvaluatorDemo10(), startPoint, endPoint);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                currentPoint = (PointDemo10) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+        anim.setInterpolator(new BounceInterpolator());
+        anim.setDuration(3000);
+        anim.start();
+    }
+
     public void start(int animation) {
         currentPoint = null;
-        this.animation= animation;
+        this.animation = animation;
         invalidate();
     }
 
@@ -141,87 +189,6 @@ class MyAnimViewDemo10 extends View {
 
 }
 
-class ColorEvaluatorDemo10 implements TypeEvaluator {
-    private int mCurrentRed = -1;
-
-    private int mCurrentGreen = -1;
-
-    private int mCurrentBlue = -1;
-
-    @Override
-    public Object evaluate(float fraction, Object startValue, Object endValue) {
-        String startColor = (String) startValue;
-        String endColor = (String) endValue;
-        int startRed = Integer.parseInt(startColor.substring(1, 3), 16);
-        int startGreen = Integer.parseInt(startColor.substring(3, 5), 16);
-        int startBlue = Integer.parseInt(startColor.substring(5, 7), 16);
-        int endRed = Integer.parseInt(endColor.substring(1, 3), 16);
-        int endGreen = Integer.parseInt(endColor.substring(3, 5), 16);
-        int endBlue = Integer.parseInt(endColor.substring(5, 7), 16);
-        // 初始化颜色的值
-        if (mCurrentRed == -1) {
-            mCurrentRed = startRed;
-        }
-        if (mCurrentGreen == -1) {
-            mCurrentGreen = startGreen;
-        }
-        if (mCurrentBlue == -1) {
-            mCurrentBlue = startBlue;
-        }
-        // 计算初始颜色和结束颜色之间的差值
-        int redDiff = Math.abs(startRed - endRed);
-        int greenDiff = Math.abs(startGreen - endGreen);
-        int blueDiff = Math.abs(startBlue - endBlue);
-        int colorDiff = redDiff + greenDiff + blueDiff;
-        if (mCurrentRed != endRed) {
-            mCurrentRed = getCurrentColor(startRed, endRed, colorDiff, 0,
-                    fraction);
-        } else if (mCurrentGreen != endGreen) {
-            mCurrentGreen = getCurrentColor(startGreen, endGreen, colorDiff,
-                    redDiff, fraction);
-        } else if (mCurrentBlue != endBlue) {
-            mCurrentBlue = getCurrentColor(startBlue, endBlue, colorDiff,
-                    redDiff + greenDiff, fraction);
-        }
-        // 将计算出的当前颜色的值组装返回
-        String currentColor = "#" + getHexString(mCurrentRed)
-                + getHexString(mCurrentGreen) + getHexString(mCurrentBlue);
-        return currentColor;
-    }
-
-    /**
-     * 根据fraction值来计算当前的颜色。
-     */
-    private int getCurrentColor(int startColor, int endColor, int colorDiff,
-                                int offset, float fraction) {
-        int currentColor;
-        if (startColor > endColor) {
-            currentColor = (int) (startColor - (fraction * colorDiff - offset));
-            if (currentColor < endColor) {
-                currentColor = endColor;
-            }
-        } else {
-            currentColor = (int) (startColor + (fraction * colorDiff - offset));
-            if (currentColor > endColor) {
-                currentColor = endColor;
-            }
-
-        }
-        return currentColor;
-    }
-
-    /**
-     * 将10进制颜色值转换成16进制。
-     */
-    private String getHexString(int value) {
-        String hexString = Integer.toHexString(value);
-        if (hexString.length() == 1) {
-            hexString = "0" + hexString;
-        }
-        return hexString;
-    }
-
-}
 
 class PointDemo10 {
 
@@ -254,6 +221,21 @@ class PointEvaluatorDemo10 implements TypeEvaluator {
         float y = startPoint.getY() + fraction * (endPoint.getY() - startPoint.getY());
         PointDemo10 point = new PointDemo10(x, y);
         return point;
+    }
+
+}
+
+class DecelerateAccelerateInterpolator implements TimeInterpolator {
+
+    @Override
+    public float getInterpolation(float input) {
+        float result;
+        if (input <= 0.5) {
+            result = (float) (Math.sin(Math.PI * input)) / 2;
+        } else {
+            result = (float) (2 - Math.sin(Math.PI * input)) / 2;
+        }
+        return result;
     }
 
 }

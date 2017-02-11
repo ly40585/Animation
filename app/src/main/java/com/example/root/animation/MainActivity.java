@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         fragmentList.add(new Demo8Fragment());
         fragmentList.add(new Demo9Fragment());
         fragmentList.add(new Demo10Fragment());
+        fragmentList.add(new Demo11Fragment());
 
     }
 
