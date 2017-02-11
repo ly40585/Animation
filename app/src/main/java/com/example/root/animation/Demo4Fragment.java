@@ -11,13 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
-public class Demo4Fragment extends Fragment {
+public class Demo4Fragment extends Fragment implements View.OnClickListener {
 
     private String TAG = "linyuan";
-    private ValueAnimator anim;
+    private ObjectAnimator anim;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,19 +30,22 @@ public class Demo4Fragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(TAG, "Demo4Fragment onCreateView");
+
         View view = inflater.inflate(R.layout.demo4, container, false);
-        TextView textView = (TextView)view.findViewById(R.id.textview);
-        ObjectAnimator anim = ObjectAnimator.ofFloat(textView, "alpha", 1f, 0f, 1f);
+        Button button = (Button) view.findViewById(R.id.button);
+        button.setOnClickListener(this);
+        TextView textView = (TextView) view.findViewById(R.id.textview);
+        float curTranslationX = textView.getTranslationX();
+        anim = ObjectAnimator.ofFloat(textView, "translationX", curTranslationX, -500f, curTranslationX);
         anim.setDuration(5000);
-        anim.start();
+
         return view;
 
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "Demo4Fragment onDestroy");
-        //anim.cancel();
+    public void onClick(View v) {
+        anim.start();
     }
 }

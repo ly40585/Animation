@@ -1,6 +1,5 @@
 package com.example.root.animation;
 
-import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
@@ -13,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-public class Demo11Fragment extends Fragment {
+public class Demo03Fragment extends Fragment {
 
     private String TAG = "linyuan";
     private ValueAnimator anim;
@@ -28,13 +27,19 @@ public class Demo11Fragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "Demo5Fragment onCreateView");
+        Log.i(TAG, "Demo3Fragment onCreateView");
         View view = inflater.inflate(R.layout.demo4, container, false);
-         TextView textView = (TextView) view.findViewById(R.id.textview);
+        view.findViewById(R.id.textview).setVisibility(View.GONE);
+        final TextView textView = (TextView) view.findViewById(R.id.log);
 
-        Animator animator = AnimatorInflater.loadAnimator(getActivity(), R.animator.demo11);
-        animator.setTarget(textView);
-
+        ValueAnimator animator = (ValueAnimator) AnimatorInflater.loadAnimator(getActivity(), R.animator.demo7_1);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Log.i(TAG, ""+animation.getAnimatedValue());
+                textView.setText(""+textView.getText() + "value = " + animation.getAnimatedValue()+"\n");
+            }
+        });
         animator.start();
 
 
@@ -45,7 +50,7 @@ public class Demo11Fragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "Demo5Fragment onDestroy");
+        Log.i(TAG, "Demo3Fragment onDestroy");
         //anim.cancel();
     }
 }
