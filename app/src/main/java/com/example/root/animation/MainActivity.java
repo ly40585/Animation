@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public static String TAG = "linyuan";
     private Spinner mSpinner;
-    private FrameLayout mFrameLayout;
-    //private Button mButton;
     FragmentTransaction transaction;
     FragmentManager fm;
 
@@ -30,26 +28,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mSpinner = (Spinner) findViewById(R.id.spinner_list);
-        //mButton = (Button) findViewById(R.id.button);
-        mFrameLayout = (FrameLayout) findViewById(R.id.frame_layout);
         mSpinner.setOnItemSelectedListener(this);
-        //mButton.setOnClickListener(this);
         fm = getFragmentManager();
         addFragments();
     }
 
     private void addFragments() {
-        //fragmentList.add(new Demo01Fragment());
         fragmentList.add(new Demo1Fragment());
-        //fragmentList.add(new Demo02Fragment());
         fragmentList.add(new Demo2Fragment());
         fragmentList.add(new Demo3Fragment());
         fragmentList.add(new Demo4Fragment());
         fragmentList.add(new Demo5Fragment());
         fragmentList.add(new Demo6Fragment());
         fragmentList.add(new Demo7Fragment());
-        //fragmentList.add(new Demo03Fragment());
-        //fragmentList.add(new Demo04Fragment());
         fragmentList.add(new Demo8Fragment());
         fragmentList.add(new Demo9Fragment());
         fragmentList.add(new Demo10Fragment());
